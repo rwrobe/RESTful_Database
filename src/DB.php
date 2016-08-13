@@ -16,10 +16,38 @@ class DB {
 	public $textdomain = '';
 	/** @var mixed $items The Database items retrieved */
 	public $items = array();
+	/** @var mixed $field_names Fields in the DB */
+	public static $field_names = array();
 
 
 	public function __construct() {
-		$this->textdomain = 'rdb';
+		$this->textdomain  = 'rdb';
+		self::$field_names = array(
+			'v_id',
+			'updated',
+			'original_date',
+			'v_name',
+			'voca_client',
+			'new_client',
+			'activated_cont',
+			'dod',
+			'jurisdiction',
+			'type_of_crime',
+			'dob',
+			'client_name',
+			'relationship',
+			'address',
+			'email',
+			'telephone',
+			'voca_ct_race',
+			'voca_ct_gender',
+			'voca_age',
+			'voca_service_area',
+			'voca_victimization',
+			'voca_disabilities',
+			'status_date',
+			'status'
+		);
 	}
 
 	/**
@@ -27,21 +55,37 @@ class DB {
 	 * This should also allow us to include accented characters.
 	 */
 	public static function create_db() {
+
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
-		$table_name      = $wpdb->prefix . 'restful_Database';
+		$table_name      = $wpdb->prefix . 'restful_database';
 
 		$sql = "CREATE TABLE $table_name (
-			item_id varchar(30) NOT NULL DEFAULT '',
-			parent_item_id varchar	(30) NOT NULL DEFAULT '0',
-			children varchar(140) NOT NULL DEFAULT '',
-			item_title varchar(140) NOT NULL DEFAULT '',
-			item_type varchar(20) NOT NULL DEFAULT 'dir',
-			item_download_url VARCHAR(140) NOT NULL DEFAULT '',
-			item_modified datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			item_groups varchar(140) NOT NULL DEFAULT 'admin',
-			PRIMARY KEY  (item_id),
-			KEY item_groups (item_groups)
+			v_id BIGINT(30) NOT NULL AUTO_INCREMENT,
+			updated DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+			original_date DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+			v_name VARCHAR(140) NOT NULL DEFAULT '',
+			voca_client VARCHAR(10) NOT NULL DEFAULT '',
+			new_client VARCHAR(10) NOT NULL DEFAULT '',
+			activated_cont DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+			dod DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+			jurisdiction DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+			type_of_crime varchar(140) NOT NULL DEFAULT '',
+			dob VARCHAR(140) NOT NULL DEFAULT '',
+			client_name VARCHAR(140) NOT NULL DEFAULT '',
+			relationship VARCHAR(140) NOT NULL DEFAULT '',
+			address VARCHAR(140) NOT NULL DEFAULT '',
+			email VARCHAR(140) NOT NULL DEFAULT '',
+			telephone VARCHAR(140) NOT NULL DEFAULT '',
+			voca_ct_race VARCHAR(1) NOT NULL DEFAULT '',
+			voca_ct_gender VARCHAR(1) NOT NULL DEFAULT '',
+			voca_age VARCHAR(5) NOT NULL DEFAULT '',
+			voca_service_area VARCHAR(1) NOT NULL DEFAULT '',
+			voca_victimization VARCHAR(1) NOT NULL DEFAULT '',
+			voca_disabilities VARCHAR(1) NOT NULL DEFAULT '',
+			status_date DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+			status VARCHAR(140) NOT NULL DEFAULT '',
+			UNIQUE KEY id (id)
 		) $charset_collate; ";
 
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
@@ -49,101 +93,18 @@ class DB {
 	}
 
 	/**
-	 * List a directory from the parent ID
+	 * Save rows into the DB
 	 *
-	 * @param string $dir_id The parent ID
+	 * @param mixed $request An array of values corresponding to the columns of our db
 	 */
-	public static function list_dir( $dir_id ) {
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'restful_Database';
+	public static function save_data( $request ) {
+		$clean_data = map_deep( $request, 'sanitize_text_field' );
+		$fields     = explode( ',', self::$field_names );
+		$wildcards  = ( "%s" * sizeof( $fields ) );
 
-		$sql = "SELECT * FROM `$table_name` WHERE `parent_item_id` = %s;";
-
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				$sql, stripslashes( $dir_id )
-			),
-			ARRAY_A );
-	}
-
-	/**
-	 * Get an item from it's ID
-	 *
-	 * @param string $item_id
-	 */
-	public static function get_item( $item_id ) {
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'restful_Database';
-
-		$sql = "SELECT * FROM `$table_name` WHERE `item_id` = %s;";
-
-
-		$result = $wpdb->get_results(
-			$wpdb->prepare(
-				$sql, stripslashes( $item_id )
-			),
-			ARRAY_A );
-
-		if ( $result ) {
-			return $result[0];
-		} else {
-			return new \WP_Error( '100', __( 'There is no item for that ID' ) );
-		}
-	}
-
-	/**
-	 * Get an item's parent from it's ID
-	 *
-	 * @param string $item_id
-	 */
-	public static function get_parent( $item_id ) {
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'restful_Database';
-
-		$sql = "SELECT * FROM `$table_name` WHERE `item_id` = %s;";
-
-
-		$results = $wpdb->get_results(
-			$wpdb->prepare(
-				$sql, stripslashes( $item_id )
-			),
-			ARRAY_A );
-
-		return $results[0]['parent_item_id'];
-	}
-
-	/**
-	 * Get an item's children from it's ID
-	 *
-	 * @param string $item_id
-	 */
-	public static function get_children( $item_id ) {
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'restful_Database';
-
-		$sql = "SELECT * FROM `$table_name` WHERE `parent_item_id` = %s;";
-
-		$results = $wpdb->get_results(
-			$wpdb->prepare(
-				$sql, $item_id
-			),
-			ARRAY_A );
-
-		return $results;
-	}
-
-	/**
-	 * Save the Database response JSON in the database
-	 *
-	 * @param $json
-	 */
-	public static function save_drive( $record ) {
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'restful_Database';
-
-		$sql = "INSERT INTO `$table_name` (item_id, parent_item_id, children, item_title, item_type, item_download_url, item_modified, item_groups) 
+		$sql = "INSERT INTO `$table_name` ($fields) 
 				SELECT 
-					%s, %s, %s, %s, %s, %s, %s, %s 
+					$wildcards
 				FROM 
 					dual 
 				WHERE 
@@ -155,76 +116,5 @@ class DB {
 						WHERE 
 							`item_id` = %s
 					);";
-
-		$return = $wpdb->get_results( $wpdb->prepare( $sql,
-			$record['item_id'],
-			$record['parent_item_id'],
-			'',
-			$record['item_title'],
-			$record['item_type'],
-			$record['item_download_url'],
-			$record['item_modified'],
-			'',
-			$record['item_id']
-		) );
-
-		return $return;
-	}
-
-	/**
-	 * Grab the root directory's ID
-	 *
-	 * @return string   The item ID
-	 */
-	public static function quicky_root_finder() {
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'restful_Database';
-
-		$sql = "SELECT * FROM $table_name WHERE item_title = 'root'";
-
-		$return = $wpdb->get_results( $sql );
-
-		return $return[0]->item_id;
-	}
-
-	/**
-	 * A quick function to get only the directories, for permissions purposes
-	 *
-	 * @return mixed    An array of item IDs
-	 */
-	public static function get_dirs(){
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'restful_Database';
-		$return = array();
-
-		$sql = "SELECT item_ID FROM $table_name WHERE item_type = 'dir'";
-
-		$results = $wpdb->get_results( $sql, ARRAY_N );
-
-		/** Flatten the array */
-		foreach ( $results as $result ) {
-			$return[] = sanitize_text_field( $result[0] );
-		}
-
-		return $return;
-	}
-
-	/**
-	 * Save the links generated by the Database embed URL generator
-	 */
-	public static function save_share_link( $item_id, $url ){
-		global $wpdb;
-		$table_name = $wpdb->prefix . 'restful_Database';
-		$return = '';
-
-		$sql = "UPDATE `$table_name` SET item_download_url = '%s' WHERE item_id = '%s';";
-
-		$results = $wpdb->get_results( $wpdb->prepare( $sql,
-				$url,
-				$item_id
-			),
-		ARRAY_N );
-
-		return $return;
 	}
 }
