@@ -38,7 +38,7 @@ function register_rdb_settings() {
  *
  * @todo: Add nonce
  */
-function rod_settings_page() {
+function rdb_settings_page() {
 	?>
 	<div class="wrap">
 		<h2>RESTful Database Settings</h2>
