@@ -48,10 +48,12 @@ class RESTful_DB {
 	/**
 	 * Grab the download URL for one item
 	 *
-	 * @var int $page   The page to retrieve
+	 * @var mixed $args The query args
 	 */
-	public function get_data( $page = 0 ) {
-		$return = '';
+	public function get_data( $args = array() ) {
+		$return = array();
+
+		$return = \notne\rdb\DB::get_data( $args );
 
 		$response = new \WP_REST_Response( $return );
 		$response->header( 'Access-Control-Allow-Origin', apply_filters( 'rdb_access_control_allow_origin', '*' ) );

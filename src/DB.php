@@ -98,9 +98,16 @@ class DB {
 	 * @param mixed $request An array of values corresponding to the columns of our db
 	 */
 	public static function save_data( $request ) {
-		$clean_data = map_deep( $request, 'sanitize_text_field' );
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'restful_database';
+		/**
+		 * @var mixed $clean_data We flip and replace they array keys here to order the array to match the DB fields.
+		 */
+		$clean_data = array_merge( array_flip( map_deep( $request, 'sanitize_text_field' ) ), self::$field_names );
 		$fields     = explode( ',', self::$field_names );
 		$wildcards  = ( "%s" * sizeof( $fields ) );
+
+		wp_die( $clean_data );
 
 		$sql = "INSERT INTO `$table_name` ($fields) 
 				SELECT 
@@ -114,7 +121,39 @@ class DB {
 						FROM 
 							`$table_name` 
 						WHERE 
-							`item_id` = %s
+							`v_id` = %s
 					);";
+
+		return $wpdb->get_results( $wpdb->prepare( $sql, $clean_data ) );
+	}
+
+	/**
+	 * Grab rows from the DB
+	 *
+	 * @param mixed $args The query arguments
+	 */
+	public static function get_data( $args ) {
+		global $wpdb;
+		$table_name     = $wpdb->prefix . 'restful_database';
+		$posts_per_page = $args['posts_per_page'] ? esc_html( $args['posts_per_page'] ) : 20;
+		$page           = $args['page'] ? esc_html( $args['page'] ) : 0;
+		$page_offset    = $page * $posts_per_page;
+		$return         = array();
+		$results        = array();
+
+		$sql      = "SELECT * FROM %s LIMIT %d OFFSET %d";
+		$prepared = $wpdb->prepare( $sql, array(
+			$table_name,
+			$posts_per_page,
+			$page_offset
+		) );
+		$results  = $wpdb->get_results( $prepared, ARRAY_N );
+
+		/** Flatten the array */
+		foreach ( $results as $result ) {
+			$return[] = sanitize_text_field( $result[0] );
+		}
+
+		return $return;
 	}
 }
