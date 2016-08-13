@@ -1,0 +1,9 @@
+{
+    "name": "thelookandfeel/restful-one-drive",
+    "type": "wordpress-plugin",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}
