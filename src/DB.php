@@ -85,10 +85,11 @@ class DB {
 			voca_disabilities VARCHAR(1) NOT NULL DEFAULT '',
 			status_date DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 			status VARCHAR(140) NOT NULL DEFAULT '',
-			UNIQUE KEY id (id)
+			UNIQUE KEY v_id (v_id)
 		) $charset_collate; ";
 
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+
 		dbDelta( $sql );
 	}
 

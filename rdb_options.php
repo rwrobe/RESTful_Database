@@ -14,12 +14,12 @@ add_action('admin_menu', 'rdb_create_menu');
 function rdb_create_menu() {
 
 	add_menu_page(
-		'Database',
-		'Database',
+		'Database Settings',
+		'Database Settings',
 		'administrator',
 		__FILE__,
 		'rdb_settings_page',
-		'dashicons-cloud'
+		'dashicons-feedback'
 	);
 
 	add_action( 'admin_init', 'register_rdb_settings' );

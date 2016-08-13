@@ -9,7 +9,7 @@
  * @wordpress
  * Plugin Name: RESTful Database
  * Plugin URI: https://github.com/thelookandfeel/RESTful_DB
- * Description: Creates a custom Folders post type and REST endpoints to access and display folders from MS Database.
+ * Description: Creates a custom database for use with the jQuery DataTables library.
  * Author: <a href="http://notne.com">Rob Ward</a>
  * Version: 0.1
  * Text Domain: rdb
@@ -42,9 +42,6 @@ register_activation_hook( __FILE__, array( '\notne\rdb\DB', 'create_db' ) );
 
 /** Add the REST endpoints */
 require_once 'src/RESTful_DB.php';
-
-/** Add template tags */
-require_once 'src/template-tags.php';
 
 /** Add an admin page */
 require_once 'rdb_options.php';
