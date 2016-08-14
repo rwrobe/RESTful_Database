@@ -37,6 +37,7 @@ class Files_Template {
 		wp_enqueue_script( 'rdb-app', RDB_PLUGIN_URL . 'js/app.js', array( 'jquery' ), '1.0', true );
 		wp_localize_script( 'rdb-app', 'rdb_options', array(
 			'site_url'    => get_site_url(),
+			'api_base'    => '/wp-json/restful-db/v1/',
 		) );
 	}
 

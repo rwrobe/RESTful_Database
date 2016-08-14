@@ -1,16 +1,3 @@
-#loginText {
-    position: absolute;
-    left: 50%;
-}
-
-td.key input {
-    width: 100%;
-}
-
-td.hidden {
-    display: none;
-}
-
 #loading {
     display: block;
     padding-left: 80px;

@@ -9,4 +9,11 @@
 //rdb_the_children( rdb_get_root_id(), true );
 $rd = new \notne\rdb\RESTful_DB(); ?>
 
-<div id="rdb"></div>
+<div id="rdb">
+	<div id="loading">
+		<span>
+			<div id="loader"></div>
+			Loading
+		</span>
+	</div>
+</div>

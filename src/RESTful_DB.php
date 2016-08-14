@@ -30,7 +30,7 @@ class RESTful_DB {
 		/**
 		 * @var string $namespace The base REST route, explorable at BASE_URL/wp-json/resful-od/v1/
 		 */
-		$namespace = 'restful-od/v1';
+		$namespace = 'restful-db/v1';
 
 		register_rest_route( $namespace, '/get-data/', array(
 			'methods'  => 'GET',

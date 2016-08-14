@@ -14,9 +14,10 @@
 			$loading = $( document.getElementById( 'loading' ) ),
 			folders = {},
 			api_settings = {
+				site_url: '',
 				api_base: '',
 				endpoints: {
-					get_data: {route: '/get-data/', method: 'GET'}
+					get_data: {route: 'get-data/', method: 'GET'}
 				}
 			};
 
@@ -24,8 +25,7 @@
 		 * This function will be called on document.ready or at any other time to instantiate the object.
 		 */
 		var init = function () {
-
-			api_settings.api_base = rdb_options.site_url;
+			api_settings.api_base = rdb_options.site_url + rdb_options.api_base;
 			init_page();
 		};
 
@@ -41,15 +41,14 @@
 		/**
 		 * Loads the data via the REST API
 		 */
-		var get_data = function () {
+		var get_data = function ( args ) {
 
-			do_ajax( api_settings.endpoints.get_data )
+			do_ajax( api_settings.endpoints.get_data, args )
 				.done( function ( data ) {
-					$rdb.append( data );
-					$loading.removeClass( 'visible' );
+					$rdb.removeClass( 'loading' ).append( data );
 				} )
 				.fail( function ( data ) {
-					console.log( data.responseText );
+					$rdb.append( '<iframe>' + data.responseText + '</iframe>' );
 				} );
 		};
 

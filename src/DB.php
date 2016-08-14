@@ -147,19 +147,15 @@ class DB {
 		$return         = array();
 		$results        = array();
 
-		$sql      = "SELECT * FROM %s LIMIT %d OFFSET %d";
+		$sql      = "SELECT * FROM $table_name LIMIT %d OFFSET %d";
+
 		$prepared = $wpdb->prepare( $sql, array(
-			$table_name,
 			$posts_per_page,
 			$page_offset
 		) );
+
 		$results  = $wpdb->get_results( $prepared, ARRAY_N );
 
-		/** Flatten the array */
-		foreach ( $results as $result ) {
-			$return[] = sanitize_text_field( $result[0] );
-		}
-
-		return $return;
+		return $results;
 	}
 }
