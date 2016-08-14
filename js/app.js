@@ -16,7 +16,7 @@
 			api_settings = {
 				api_base: '',
 				endpoints: {
-					get_data: {route: 'get-data/', method: 'GET'}
+					get_data: {route: '/get-data/', method: 'GET'}
 				}
 			};
 

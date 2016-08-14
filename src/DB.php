@@ -53,6 +53,8 @@ class DB {
 	/**
 	 * Given the extensive nature of the Database file-tree, we're creating a custom table for it.
 	 * This should also allow us to include accented characters.
+	 *
+	 * @todo Function for creating this table based on user-selected parameters from a setup script.
 	 */
 	public static function create_db() {
 
@@ -62,19 +64,22 @@ class DB {
 
 		$sql = "CREATE TABLE $table_name (
 			v_id BIGINT(30) NOT NULL AUTO_INCREMENT,
-			updated DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+			updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			original_date DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-			v_name VARCHAR(140) NOT NULL DEFAULT '',
+			v_name_first VARCHAR(140) NOT NULL DEFAULT '',
+			v_name_middle VARCHAR(140) NOT NULL DEFAULT '',
+			v_name_last VARCHAR(140) NOT NULL DEFAULT '',
 			voca_client VARCHAR(10) NOT NULL DEFAULT '',
 			new_client VARCHAR(10) NOT NULL DEFAULT '',
 			activated_cont DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 			dod DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-			jurisdiction DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+			jurisdiction VARCHAR(10) NOT NULL DEFAULT '',
 			type_of_crime varchar(140) NOT NULL DEFAULT '',
-			dob VARCHAR(140) NOT NULL DEFAULT '',
-			client_name VARCHAR(140) NOT NULL DEFAULT '',
+			dob DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
+			client_name_first VARCHAR(140) NOT NULL DEFAULT '',
+			client_name_middle VARCHAR(140) NOT NULL DEFAULT '',
+			client_name_last VARCHAR(140) NOT NULL DEFAULT '',
 			relationship VARCHAR(140) NOT NULL DEFAULT '',
-			address VARCHAR(140) NOT NULL DEFAULT '',
 			email VARCHAR(140) NOT NULL DEFAULT '',
 			telephone VARCHAR(140) NOT NULL DEFAULT '',
 			voca_ct_race VARCHAR(1) NOT NULL DEFAULT '',

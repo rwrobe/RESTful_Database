@@ -43,5 +43,8 @@ register_activation_hook( __FILE__, array( '\notne\rdb\DB', 'create_db' ) );
 /** Add the REST endpoints */
 require_once 'src/RESTful_DB.php';
 
+/** Add the file templates */
+require_once 'src/Files_Template.php';
+
 /** Add an admin page */
 require_once 'rdb_options.php';
